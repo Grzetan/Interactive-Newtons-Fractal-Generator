@@ -1,10 +1,13 @@
 #include <iostream>
-#include <algorithm>
+#include <fstream>
+#include <stdlib.h>
+#include <stdio.h>
+#include <dlfcn.h>
 #include "Complex.h"
 
-std::string fx = "0", fprime = "0", multi, pow, sign;
+void preprocessChunk(std::string chunk, std::string& fx, std::string& fprime){
+    std::string multi, pow, sign;
 
-void preprocessChunk(std::string chunk){
     if(chunk.find('z') != std::string::npos){
         multi = chunk.substr(1, chunk.find('z')-1);
         if(multi == ""){
@@ -24,36 +27,76 @@ void preprocessChunk(std::string chunk){
     }
 }
 
-void processEquation(std::string equation){
+void processEquation(std::string equation, std::string& fx, std::string& fprime){
     int lastChunk = 0;
     if(equation[0] != '-'){
         equation = "+" + equation;
     }
     for(int i=0; i<equation.length(); i++){
         if(equation[i] == '+' || equation[i] == '-'){
-            preprocessChunk(equation.substr(lastChunk, i - lastChunk));
+            preprocessChunk(equation.substr(lastChunk, i - lastChunk), fx, fprime);
             lastChunk = i;
         }
     }
-    preprocessChunk(equation.substr(lastChunk, equation.length()));
+    preprocessChunk(equation.substr(lastChunk, equation.length()), fx, fprime);
+
+    //Prepare beggining of the equation
+    if(fx[0] == '+'){
+        fx.erase(0,1);
+    }else if(fx[0] == '-'){
+        fx.erase(0,1);
+        fx.insert(fx.find("*")+1, "-");
+    }
+
+    if(fprime[0] == '+'){
+        fprime.erase(0,1);
+    }else if(fprime[0] == '-'){
+        fprime.erase(0,1);
+        fprime.insert(fprime.find("*")+1, "-");
+    }
 }
 
-void compile(std::string equation){
-    
+void compile(std::string fx, std::string fprime){
+    std::cout << "Compiling code..." << std::endl;;
+    std::ofstream f ( "src/tmp.cpp" );
+    f << "#include <iostream>\n#include <Complex.h>\n\nComplex fx(Complex& z){\nComplex c = " + fx + ";\nreturn c; \n}\n\n" +
+    "Complex fprime(Complex& z){\nComplex c = " + fprime + ";\nreturn c; \n}";
+    f.close();
+    system ("/usr/bin/g++ -I./src -shared -fPIC src/tmp.cpp src/Complex.cpp -o src/tmp.so");
+    // // load library       
+    // void * lib = dlopen ("./libtmp.so", RTLD_NOW);
+    // if (!lib) {
+    //     std::cout << "Cannot open library: " << dlerror() << '\n';
+    //     std::exit(0);
+    // }
+
+    // if (lib) {
+    //     void* fun = dlsym(lib, "fun");
+
+    //     // if (fun) {
+    //     //     fun(3);
+    //     // }
+    //     dlclose ( lib );
+    // }
 }
 
 int main(int argc, char *argv[]){
     std::string equation = argv[1];
+    std::string fx = "", fprime = "";
 
     //Remove spaces
-    equation.erase(std::remove(equation.begin(), equation.end(), ' '), equation.end());
+    for(int i=0; i<equation.length(); i++){
+        if(equation[i] == ' '){
+            equation.erase(equation.begin() + i);
+        }
+    }
 
-    //Preprocess equation
-    processEquation(equation);
-    std::cout << fx << std::endl;
-    std::cout << fprime << std::endl;
+    //Generate f(x) and it's derivative
+    processEquation(equation, fx, fprime);
+    // std::cout << fx << std::endl;
+    // std::cout << fprime << std::endl;
     //Compile
-    compile(equation);
+    compile(fx, fprime);
 
     return 0;
 }
