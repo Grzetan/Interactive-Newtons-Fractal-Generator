@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
-#include <stdio.h>
 #include <dlfcn.h>
 #include "Complex.h"
 
@@ -57,27 +56,41 @@ void processEquation(std::string equation, std::string& fx, std::string& fprime)
 }
 
 void compile(std::string fx, std::string fprime){
-    std::cout << "Compiling code..." << std::endl;;
+    std::cout << "Compiling code..." << std::endl;
+
+    //Create source file
     std::ofstream f ( "src/tmp.cpp" );
-    f << "#include <iostream>\n#include <Complex.h>\n\nComplex fx(Complex& z){\nComplex c = " + fx + ";\nreturn c; \n}\n\n" +
-    "Complex fprime(Complex& z){\nComplex c = " + fprime + ";\nreturn c; \n}";
+    f << "#include <iostream>\n#include <Complex.h>\n\nextern \"C\" Complex fx(Complex& z){\nComplex c = " + fx + ";\nreturn c; \n}\n\n" +
+    "extern \"C\" Complex fprime(Complex& z){\nComplex c = " + fprime + ";\nreturn c; \n}";
     f.close();
-    system ("/usr/bin/g++ -I./src -shared -fPIC src/tmp.cpp src/Complex.cpp -o src/tmp.so");
-    // // load library       
-    // void * lib = dlopen ("./libtmp.so", RTLD_NOW);
-    // if (!lib) {
-    //     std::cout << "Cannot open library: " << dlerror() << '\n';
-    //     std::exit(0);
-    // }
+    
+    //Compile code
+    system ("g++ -I./src src/tmp.cpp src/Complex.cpp -shared -fPIC -o src/tmp.so -ldl");
+}
 
-    // if (lib) {
-    //     void* fun = dlsym(lib, "fun");
+void generateFractal(){
+    //Load created library      
+    typedef Complex(*func_t)(Complex&);
+    typedef Complex(*fprime_t)(Complex&);
 
-    //     // if (fun) {
-    //     //     fun(3);
-    //     // }
-    //     dlclose ( lib );
-    // }
+    void * lib = dlopen ("./src/tmp.so", RTLD_LAZY);
+    if (!lib) {
+        std::cout << "Cannot open library: " << dlerror() << '\n';
+        std::exit(0);
+    }
+
+    if (lib) {
+        //Load functions
+        func_t fun = (func_t) dlsym(lib, "fx");
+        fprime_t fprime = (fprime_t) dlsym(lib, "fprime");
+        //Start generation
+        Complex z(-1,-1);
+        Complex fx_v = fun(z);
+        Complex fprime_v = fprime(z);
+        Complex a = fx_v / fprime_v;
+        a.print();
+        dlclose ( lib );
+    }
 }
 
 int main(int argc, char *argv[]){
@@ -93,10 +106,12 @@ int main(int argc, char *argv[]){
 
     //Generate f(x) and it's derivative
     processEquation(equation, fx, fprime);
-    // std::cout << fx << std::endl;
-    // std::cout << fprime << std::endl;
+
     //Compile
     compile(fx, fprime);
+
+    //Load library
+    generateFractal();
 
     return 0;
 }

@@ -2,6 +2,7 @@
 *.d
 *tmp.cpp
 xd
+.vscode/
 
 # Compiled Object files
 *.slo
