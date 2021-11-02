@@ -76,6 +76,7 @@ void compile(std::string fx, std::string fprime){
 }
 
 f loadLibrary(){
+    std::cout << "Loading library..." << std::endl;
     //Load created library      
     void * lib = dlopen ("./src/tmp.so", RTLD_LAZY);
     if (!lib) {
@@ -88,7 +89,30 @@ f loadLibrary(){
     return {fx, fprime};
 }
 
+void generateFractal(func_t fx, func_t fprime){
+    std::cout << "Generating fractal..." << std::endl;
+    //Constants
+    int WIDTH = 1000, HEIGHT = 800, ITERATIONS = 10;
+    double xmin = -2, xmax = 2, ymin = -2, ymax = 2;
+
+    //Variables for pixel/coefficient transform
+    double linspaceX[WIDTH], linspaceY[HEIGHT], stepX = (xmax - xmin) / WIDTH, stepY = (ymax - ymin) / HEIGHT, cofx, cofy;
+    
+    for(int x=0; x<WIDTH; x++){
+        cofx = stepX * x;
+        for(int y=0; y<HEIGHT; y++){
+            cofy = stepY * y;
+            Complex z(cofx, cofy);
+            for(int i=0; i<ITERATIONS; i++){
+                z = z - fx(z) / fprime(z);
+            }
+        }
+    }
+
+}
+
 int main(int argc, char *argv[]){
+    //Load equation
     std::string equation = argv[1];
     std::string fx = "", fprime = "";
 
@@ -102,18 +126,14 @@ int main(int argc, char *argv[]){
     //Generate f(x) and it's derivative
     processEquation(equation, fx, fprime);
 
-    //Compile
+    //Compile generated code
     compile(fx, fprime);
 
     //Load library
     f F = loadLibrary();
 
     //Generate Fractal
-    
-
-    Complex o(1,1);
-    F.x(o);
-    F.prime(o);
+    generateFractal(F.x, F.prime);
 
     return 0;
 }
