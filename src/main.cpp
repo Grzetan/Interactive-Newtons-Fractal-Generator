@@ -4,6 +4,13 @@
 #include <dlfcn.h>
 #include "Complex.h"
 
+typedef Complex(*func_t)(Complex&);
+
+struct f{
+    func_t x;
+    func_t prime;
+};
+
 void preprocessChunk(std::string chunk, std::string& fx, std::string& fprime){
     std::string multi, pow, sign;
 
@@ -68,29 +75,17 @@ void compile(std::string fx, std::string fprime){
     system ("g++ -I./src src/tmp.cpp src/Complex.cpp -shared -fPIC -o src/tmp.so -ldl");
 }
 
-void generateFractal(){
+f loadLibrary(){
     //Load created library      
-    typedef Complex(*func_t)(Complex&);
-    typedef Complex(*fprime_t)(Complex&);
-
     void * lib = dlopen ("./src/tmp.so", RTLD_LAZY);
     if (!lib) {
         std::cout << "Cannot open library: " << dlerror() << '\n';
         std::exit(0);
     }
-
-    if (lib) {
-        //Load functions
-        func_t fun = (func_t) dlsym(lib, "fx");
-        fprime_t fprime = (fprime_t) dlsym(lib, "fprime");
-        //Start generation
-        Complex z(-1,-1);
-        Complex fx_v = fun(z);
-        Complex fprime_v = fprime(z);
-        Complex a = fx_v / fprime_v;
-        a.print();
-        dlclose ( lib );
-    }
+    //Load functions
+    func_t fx = (func_t) dlsym(lib, "fx");
+    func_t fprime = (func_t) dlsym(lib, "fprime");
+    return {fx, fprime};
 }
 
 int main(int argc, char *argv[]){
@@ -111,7 +106,14 @@ int main(int argc, char *argv[]){
     compile(fx, fprime);
 
     //Load library
-    generateFractal();
+    f F = loadLibrary();
+
+    //Generate Fractal
+    
+
+    Complex o(1,1);
+    F.x(o);
+    F.prime(o);
 
     return 0;
 }
