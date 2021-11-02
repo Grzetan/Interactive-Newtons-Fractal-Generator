@@ -5,6 +5,10 @@ Complex::Complex(double _real, double _imag){
     imag = _imag;
 }
 
+Complex::Complex(){
+    
+}
+
 Complex::Complex(Complex*){
 
 }

@@ -5,6 +5,8 @@ public:
     double real, imag;
     Complex(double _real, double _imag);
 
+    Complex();
+
     Complex(Complex*);
 
     Complex operator^(int power);

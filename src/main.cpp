@@ -1,8 +1,11 @@
 #include <iostream>
 #include <fstream>
-#include <stdlib.h>
 #include <dlfcn.h>
+#include <math.h>
+#include <vector>
 #include "Complex.h"
+
+using std::vector;
 
 typedef Complex(*func_t)(Complex&);
 
@@ -91,23 +94,52 @@ f loadLibrary(){
 
 void generateFractal(func_t fx, func_t fprime){
     std::cout << "Generating fractal..." << std::endl;
+
     //Constants
-    int WIDTH = 1000, HEIGHT = 800, ITERATIONS = 10;
-    double xmin = -2, xmax = 2, ymin = -2, ymax = 2;
+    int WIDTH = 1000, HEIGHT = 1000, MAX_ITER = 100;
+    double xmin = -1, xmax = 1, ymin = -1, ymax = 1;
 
     //Variables for pixel/coefficient transform
     double linspaceX[WIDTH], linspaceY[HEIGHT], stepX = (xmax - xmin) / WIDTH, stepY = (ymax - ymin) / HEIGHT, cofx, cofy;
     
+    //Roots calculation
+    double TOL = 1.e-8, dist;
+    int closestRoot, i, j, k;
+    Complex delta, _dist;
+    vector<Complex> roots;
+
+    //Output map
+
     for(int x=0; x<WIDTH; x++){
         cofx = stepX * x;
         for(int y=0; y<HEIGHT; y++){
             cofy = stepY * y;
             Complex z(cofx, cofy);
-            for(int i=0; i<ITERATIONS; i++){
-                z = z - fx(z) / fprime(z);
+            for(i=0; i<MAX_ITER; i++){
+                delta = fx(z) / fprime(z);
+                if(std::abs(delta.real) < TOL || std::abs(delta.imag) < TOL){
+                    //Find closest node
+                    closestRoot = -1;
+                    for(j=0; j<roots.size(); j++){
+                        _dist = z - roots[j];
+                        dist = std::sqrt(_dist.real * _dist.real + _dist.imag * _dist.imag);
+                        if(dist < 1){
+                            closestRoot = j;
+                            break;
+                        }
+                    }
+                    if(closestRoot == -1){
+                        //If there is no root, create new one
+                        roots.push_back(z);
+                    }
+
+                    break;
+                }
+                z = z - delta;
             }
         }
     }
+    std::cout << roots.size();
 
 }
 
