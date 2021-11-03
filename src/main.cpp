@@ -3,9 +3,11 @@
 #include <dlfcn.h>
 #include <math.h>
 #include <vector>
+#include <array>
 #include "Complex.h"
 
 using std::vector;
+using std::array;
 
 typedef Complex(*func_t)(Complex&);
 
@@ -96,7 +98,7 @@ void generateFractal(func_t fx, func_t fprime){
     std::cout << "Generating fractal..." << std::endl;
 
     //Constants
-    int WIDTH = 1000, HEIGHT = 1000, MAX_ITER = 100;
+    const int WIDTH = 1000, HEIGHT = 1000, MAX_ITER = 100;
     double xmin = -1, xmax = 1, ymin = -1, ymax = 1;
 
     //Variables for pixel/coefficient transform
@@ -107,18 +109,33 @@ void generateFractal(func_t fx, func_t fprime){
     int closestRoot, i, j, k;
     Complex delta, _dist;
     vector<Complex> roots;
+    bool foundRoot;
+
+    //Roots colors
+    vector<array<int,3>> rootsColors;
 
     //Output map
+    int x = WIDTH * HEIGHT;
+    int *pixels = new int[WIDTH * HEIGHT * 3];
+
+    //Output file
+    FILE *img;
+    img = fopen("img.ppm", "wb");
+    fprintf(img, "P6\n%d %d\n%d\n", WIDTH, HEIGHT, 255);
+
+    srand(time(NULL));
 
     for(int x=0; x<WIDTH; x++){
         cofx = stepX * x;
         for(int y=0; y<HEIGHT; y++){
+            foundRoot = false;
             cofy = stepY * y;
             Complex z(cofx, cofy);
             for(i=0; i<MAX_ITER; i++){
                 delta = fx(z) / fprime(z);
+                //If step is really small
                 if(std::abs(delta.real) < TOL || std::abs(delta.imag) < TOL){
-                    //Find closest node
+                    //Find closest root
                     closestRoot = -1;
                     for(j=0; j<roots.size(); j++){
                         _dist = z - roots[j];
@@ -131,16 +148,29 @@ void generateFractal(func_t fx, func_t fprime){
                     if(closestRoot == -1){
                         //If there is no root, create new one
                         roots.push_back(z);
+                        rootsColors.push_back({rand() % 255, rand() % 255, rand() % 255});
+                        closestRoot = roots.size() - 1;
                     }
+                    //Assing corresponding color to processed pixel
+                    pixels[x*WIDTH + y] = rootsColors[closestRoot][0]; 
+                    pixels[x*WIDTH + y + 1] = rootsColors[closestRoot][1]; 
+                    pixels[x*WIDTH + y + 2] = rootsColors[closestRoot][2]; 
+                    foundRoot = true;
 
                     break;
                 }
                 z = z - delta;
             }
+            //If point isn't pulled by any root, color it black
+            if(!foundRoot){
+                pixels[x*WIDTH + y] = 0; 
+                pixels[x*WIDTH + y + 1] = 0; 
+                pixels[x*WIDTH + y + 2] = 0;   
+            }
         }
     }
     std::cout << roots.size();
-
+    free(pixels);
 }
 
 int main(int argc, char *argv[]){
