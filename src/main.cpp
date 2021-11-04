@@ -95,11 +95,9 @@ f loadLibrary(){
 }
 
 void generateFractal(func_t fx, func_t fprime){
-    std::cout << "Generating fractal..." << std::endl;
-
     //Constants
     const int WIDTH = 1000, HEIGHT = 1000, MAX_ITER = 100;
-    double xmin = -1, xmax = 1, ymin = -1, ymax = 1;
+    const double xmin = -1, xmax = 1, ymin = -1, ymax = 1;
 
     //Variables for pixel/coefficient transform
     double linspaceX[WIDTH], linspaceY[HEIGHT], stepX = (xmax - xmin) / WIDTH, stepY = (ymax - ymin) / HEIGHT, cofx, cofy;
@@ -118,15 +116,22 @@ void generateFractal(func_t fx, func_t fprime){
     static unsigned char pixel[3];
 
     //Output file
+    char* imgName;
+    char* ppm;
+    asprintf(&imgName, "%s%d", "Newtons-Fractal-", int(time(0)));
+    asprintf(&ppm, "%s%s", imgName, ".ppm");
     FILE *img;
-    img = fopen("img.ppm", "wb");
+    img = fopen(ppm, "wb");
     fprintf(img, "P6\n%d %d\n%d\n", WIDTH, HEIGHT, 255);
 
     srand(time(NULL));
 
+    time_t start = time(0);
+
     for(int y=0; y<HEIGHT; y++){
         cofy = stepY * y;
         for(int x=0; x<WIDTH; x++){
+            std::cout << "\rGenerating fractal... " << int(float(float(y*HEIGHT+x) / float(WIDTH*HEIGHT)) * 100)+1 << "%";
             foundRoot = false;
             cofx = stepX * x;
             Complex z(cofx, cofy);
@@ -139,7 +144,7 @@ void generateFractal(func_t fx, func_t fprime){
                     for(j=0; j<roots.size(); j++){
                         _dist = z - roots[j];
                         dist = std::sqrt(_dist.real * _dist.real + _dist.imag * _dist.imag);
-                        if(dist < 1){
+                        if(dist < 0.1){
                             closestRoot = j;
                             break;
                         }
@@ -169,7 +174,13 @@ void generateFractal(func_t fx, func_t fprime){
             fwrite(pixel, 1, 3, img);
         }
     }
+    std::cout << "\nGenerated in: " << float(time(0) - start) << "s" << std::endl;
     fclose(img);
+    char* shell;
+    asprintf(&shell, "convert %s %s%s", ppm, imgName, ".png");
+    system(shell);
+    asprintf(&shell, "rm %s", ppm);
+    system(shell);
 }
 
 int main(int argc, char *argv[]){
