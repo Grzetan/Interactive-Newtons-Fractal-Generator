@@ -96,14 +96,14 @@ f loadLibrary(){
 
 void generateFractal(func_t fx, func_t fprime){
     //Constants
-    const int WIDTH = 1000, HEIGHT = 1000, MAX_ITER = 100;
+    const int WIDTH = 1000, HEIGHT = 1000, MAX_ITER = 1000;
     const double xmin = -1, xmax = 1, ymin = -1, ymax = 1;
 
     //Variables for pixel/coefficient transform
     double linspaceX[WIDTH], linspaceY[HEIGHT], stepX = (xmax - xmin) / WIDTH, stepY = (ymax - ymin) / HEIGHT, cofx, cofy;
     
     //Roots calculation
-    double TOL = 1.e-8, dist;
+    double TOL = 1.e-8, rootTOL = 1.e-4,dist;
     int closestRoot, i, j, k;
     Complex delta, _dist;
     vector<Complex> roots;
@@ -144,7 +144,7 @@ void generateFractal(func_t fx, func_t fprime){
                     for(j=0; j<roots.size(); j++){
                         _dist = z - roots[j];
                         dist = std::sqrt(_dist.real * _dist.real + _dist.imag * _dist.imag);
-                        if(dist < 0.1){
+                        if(dist < rootTOL){
                             closestRoot = j;
                             break;
                         }

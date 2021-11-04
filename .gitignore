@@ -6,6 +6,7 @@ xd
 *.ppm
 *.pgm
 *.png
+*.py
 
 # Compiled Object files
 *.slo
