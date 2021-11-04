@@ -16,6 +16,18 @@ struct f{
     func_t prime;
 };
 
+struct Args{
+    int width;
+    int height;
+    const char* ppm;
+    const char* png;
+    const char* equation;
+};
+
+Args parseArgs(int count, char* values[]){
+
+}
+
 void preprocessChunk(std::string chunk, std::string& fx, std::string& fprime){
     std::string multi, pow, sign;
 
@@ -39,6 +51,13 @@ void preprocessChunk(std::string chunk, std::string& fx, std::string& fprime){
 }
 
 void processEquation(std::string equation, std::string& fx, std::string& fprime){
+    //Remove spaces
+    for(int i=0; i<equation.length(); i++){
+        if(equation[i] == ' '){
+            equation.erase(equation.begin() + i);
+        }
+    }
+    
     int lastChunk = 0;
     if(equation[0] != '-'){
         equation = "+" + equation;
@@ -94,9 +113,9 @@ f loadLibrary(){
     return {fx, fprime};
 }
 
-void generateFractal(func_t fx, func_t fprime){
+void generateFractal(func_t fx, func_t fprime, Args args){
     //Constants
-    const int WIDTH = 1000, HEIGHT = 1000, MAX_ITER = 1000;
+    const int WIDTH = args.width, HEIGHT = args.height, MAX_ITER = 1000;
     const double xmin = -1, xmax = 1, ymin = -1, ymax = 1;
 
     //Variables for pixel/coefficient transform
@@ -112,16 +131,12 @@ void generateFractal(func_t fx, func_t fprime){
     //Roots colors
     vector<array<int,3>> rootsColors;
 
-    //Output map
+    //Output pixel
     static unsigned char pixel[3];
 
     //Output file
-    char* imgName;
-    char* ppm;
-    asprintf(&imgName, "%s%d", "Newtons-Fractal-", int(time(0)));
-    asprintf(&ppm, "%s%s", imgName, ".ppm");
     FILE *img;
-    img = fopen(ppm, "wb");
+    img = fopen(args.ppm, "wb");
     fprintf(img, "P6\n%d %d\n%d\n", WIDTH, HEIGHT, 255);
 
     srand(time(NULL));
@@ -129,11 +144,11 @@ void generateFractal(func_t fx, func_t fprime){
     time_t start = time(0);
 
     for(int y=0; y<HEIGHT; y++){
-        cofy = stepY * y;
+        cofy = ymin + stepY * y;
         for(int x=0; x<WIDTH; x++){
             std::cout << "\rGenerating fractal... " << int(float(float(y*HEIGHT+x) / float(WIDTH*HEIGHT)) * 100)+1 << "%";
             foundRoot = false;
-            cofx = stepX * x;
+            cofx = xmin + stepX * x;
             Complex z(cofx, cofy);
             for(i=0; i<MAX_ITER; i++){
                 delta = fx(z) / fprime(z);
@@ -177,26 +192,19 @@ void generateFractal(func_t fx, func_t fprime){
     std::cout << "\nGenerated in: " << float(time(0) - start) << "s" << std::endl;
     fclose(img);
     char* shell;
-    asprintf(&shell, "convert %s %s%s", ppm, imgName, ".png");
+    asprintf(&shell, "convert %s %s", args.ppm, args.png);
     system(shell);
-    asprintf(&shell, "rm %s", ppm);
+    asprintf(&shell, "rm %s", args.ppm);
     system(shell);
 }
 
 int main(int argc, char *argv[]){
-    //Load equation
-    std::string equation = argv[1];
+    //Parse args
+    Args args = {500,500, "img.ppm", "img.png", argv[1]};
     std::string fx = "", fprime = "";
 
-    //Remove spaces
-    for(int i=0; i<equation.length(); i++){
-        if(equation[i] == ' '){
-            equation.erase(equation.begin() + i);
-        }
-    }
-
     //Generate f(x) and it's derivative
-    processEquation(equation, fx, fprime);
+    processEquation(argv[1], fx, fprime);
 
     //Compile generated code
     compile(fx, fprime);
@@ -205,7 +213,7 @@ int main(int argc, char *argv[]){
     f F = loadLibrary();
 
     //Generate Fractal
-    generateFractal(F.x, F.prime);
+    generateFractal(F.x, F.prime, args);
 
     return 0;
 }
