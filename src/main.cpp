@@ -115,8 +115,7 @@ void generateFractal(func_t fx, func_t fprime){
     vector<array<int,3>> rootsColors;
 
     //Output map
-    int x = WIDTH * HEIGHT;
-    int *pixels = new int[WIDTH * HEIGHT * 3];
+    static unsigned char pixel[3];
 
     //Output file
     FILE *img;
@@ -125,11 +124,11 @@ void generateFractal(func_t fx, func_t fprime){
 
     srand(time(NULL));
 
-    for(int x=0; x<WIDTH; x++){
-        cofx = stepX * x;
-        for(int y=0; y<HEIGHT; y++){
+    for(int y=0; y<HEIGHT; y++){
+        cofy = stepY * y;
+        for(int x=0; x<WIDTH; x++){
             foundRoot = false;
-            cofy = stepY * y;
+            cofx = stepX * x;
             Complex z(cofx, cofy);
             for(i=0; i<MAX_ITER; i++){
                 delta = fx(z) / fprime(z);
@@ -152,9 +151,9 @@ void generateFractal(func_t fx, func_t fprime){
                         closestRoot = roots.size() - 1;
                     }
                     //Assing corresponding color to processed pixel
-                    pixels[x*WIDTH + y] = rootsColors[closestRoot][0]; 
-                    pixels[x*WIDTH + y + 1] = rootsColors[closestRoot][1]; 
-                    pixels[x*WIDTH + y + 2] = rootsColors[closestRoot][2]; 
+                    pixel[0] = rootsColors[closestRoot][0];
+                    pixel[1] = rootsColors[closestRoot][1]; 
+                    pixel[2] = rootsColors[closestRoot][2]; 
                     foundRoot = true;
 
                     break;
@@ -163,14 +162,14 @@ void generateFractal(func_t fx, func_t fprime){
             }
             //If point isn't pulled by any root, color it black
             if(!foundRoot){
-                pixels[x*WIDTH + y] = 0; 
-                pixels[x*WIDTH + y + 1] = 0; 
-                pixels[x*WIDTH + y + 2] = 0;   
+                pixel[0] = 0; 
+                pixel[1] = 0; 
+                pixel[2] = 0;   
             }
+            fwrite(pixel, 1, 3, img);
         }
     }
-    std::cout << roots.size();
-    free(pixels);
+    fclose(img);
 }
 
 int main(int argc, char *argv[]){

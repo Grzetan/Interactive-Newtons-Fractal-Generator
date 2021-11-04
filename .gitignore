@@ -3,6 +3,9 @@
 *tmp.cpp
 xd
 .vscode/
+*.ppm
+*.pgm
+*.png
 
 # Compiled Object files
 *.slo
