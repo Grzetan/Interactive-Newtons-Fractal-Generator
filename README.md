@@ -83,6 +83,22 @@ This is **NOT** allowed:
 ./generate "sin(z^9) + 2cos(z^8) - tan(z^4) - 9"
 ```
 
+### Size
+
+Specify desired size of output image.
+
+```bash
+--size widthxheight
+```
+
+Where width and height is `int`
+
+Example:
+
+```bash
+./generate "z^3 - 1" --size 1000x1000
+```
+
 # How it works
 
 Program contains 4 steps:

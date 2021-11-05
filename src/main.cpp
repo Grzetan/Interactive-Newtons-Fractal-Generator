@@ -4,6 +4,7 @@
 #include <math.h>
 #include <vector>
 #include <array>
+#include <string.h>
 #include "Complex.h"
 
 using std::vector;
@@ -17,15 +18,45 @@ struct f{
 };
 
 struct Args{
-    int width;
-    int height;
-    const char* ppm;
-    const char* png;
+    int width = 500;
+    int height = 500;
+    const char* ppm = "Newtons-Fractal.ppm";
+    const char* png = "Newtons-Fractal.png";
     const char* equation;
 };
 
+void slice_str(const char * str, char * buffer, size_t start, size_t end)
+{
+    size_t j = 0;
+    for ( size_t i = start; i <= end; ++i ) {
+        buffer[j++] = str[i];
+    }
+    buffer[j] = 0;
+}
 Args parseArgs(int count, char* values[]){
-
+    if(count < 2){
+        std::cout << "You must provide polynomial\n";
+        std::exit(0);
+    }
+    Args args;
+    args.equation = values[1];
+    for(int i=0; i<count; i++){
+        if(strcmp(values[i], "--size") == 0){
+            char* size = values[i+1];
+            char w[strlen(size)+1];
+            char h[strlen(size)+1];
+            for(int j=0; j<strlen(size); j++){
+                if(size[j] == 'x'){//
+                    slice_str(size, w, 0, j-1);        
+                    slice_str(size, h, j+1, strlen(size));  
+                    args.width = std::stoi(w);
+                    args.height = std::stoi(h);   
+                    break;   
+                }
+            }
+        }
+    }
+    return args;
 }
 
 void preprocessChunk(std::string chunk, std::string& fx, std::string& fprime){
@@ -117,7 +148,7 @@ void generateFractal(func_t fx, func_t fprime, Args args){
     //Constants
     const int WIDTH = args.width, HEIGHT = args.height, MAX_ITER = 1000;
     const double xmin = -1, xmax = 1, ymin = -1, ymax = 1;
-
+    std::cout << WIDTH << ", " << HEIGHT << std::endl;
     //Variables for pixel/coefficient transform
     double linspaceX[WIDTH], linspaceY[HEIGHT], stepX = (xmax - xmin) / WIDTH, stepY = (ymax - ymin) / HEIGHT, cofx, cofy;
     
@@ -200,7 +231,7 @@ void generateFractal(func_t fx, func_t fprime, Args args){
 
 int main(int argc, char *argv[]){
     //Parse args
-    Args args = {500,500, "img.ppm", "img.png", argv[1]};
+    Args args = parseArgs(argc, argv);
     std::string fx = "", fprime = "";
 
     //Generate f(x) and it's derivative
