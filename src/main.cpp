@@ -20,6 +20,7 @@ struct f{
 struct Args{
     int width = 500;
     int height = 500;
+    double zoom = 1;
     const char* ppm = "Newtons-Fractal.ppm";
     const char* png = "Newtons-Fractal.png";
     const char* equation;
@@ -55,8 +56,7 @@ Args parseArgs(int count, char* values[]){
                     break;   
                 }
             }
-        }
-        else if(strcmp(values[i], "--name") == 0){
+        }else if(strcmp(values[i], "--name") == 0){
             char* name = values[i+1];
             char* ppm;
             char* png;
@@ -64,6 +64,8 @@ Args parseArgs(int count, char* values[]){
             asprintf(&png, "%s%s", name, ".png");
             args.ppm = ppm;
             args.png = png;
+        }else if(strcmp(values[i], "--zoom") == 0){
+            args.zoom = 1 / std::stod(values[i+1]);
         }
     }
     return args;
@@ -157,13 +159,13 @@ f loadLibrary(){
 void generateFractal(func_t fx, func_t fprime, Args args){
     //Constants
     const int WIDTH = args.width, HEIGHT = args.height, MAX_ITER = 1000;
-    const double xmin = -1, xmax = 1, ymin = -1, ymax = 1;
+    const double xmin = -1 * args.zoom, xmax = 1 * args.zoom, ymin = -1 * args.zoom, ymax = 1 * args.zoom; 
 
     //Variables for pixel/coefficient transform
     double linspaceX[WIDTH], linspaceY[HEIGHT], stepX = (xmax - xmin) / WIDTH, stepY = (ymax - ymin) / HEIGHT, cofx, cofy;
     
     //Roots calculation
-    double TOL = 1.e-8, rootTOL = 1.e-4,dist;
+    double TOL = 1.e-12, rootTOL = 1.e-7,dist;
     int closestRoot, i, j, k;
     Complex delta, _dist;
     vector<Complex> roots;
