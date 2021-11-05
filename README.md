@@ -1,7 +1,6 @@
 # Interactive Newtons Fractal Generator
 
-Visaulization of Newton's Fractal written in C/C++. This program generates Newton's fractal based on polynomial provided in parameters and saves it in file 
-called `Newtons-Fractal-123456789.png` where this long number is current timestamp.
+Visaulization of Newton's Fractal written in C/C++. This program generates Newton's fractal based on polynomial provided in parameters and saves it to `.png` image.
 
 # Requirements
 
@@ -38,7 +37,7 @@ and call program following steps above.
 
 # Parameters
 
-### Polymonial
+## -Polymonial
 
 To generate fractal you have to provide this argument.
 Just put it in quotes after `./generate` like this:
@@ -83,21 +82,42 @@ This is **NOT** allowed:
 ./generate "sin(z^9) + 2cos(z^8) - tan(z^4) - 9"
 ```
 
-### Size
+## -Size (Not required)
 
 Specify desired size of output image.
+
+Default value is 500px x 500px
 
 ```bash
 --size widthxheight
 ```
 
-Where width and height is `int`
+Where `width` and `height` are `int`
 
 Example:
 
 ```bash
 ./generate "z^3 - 1" --size 1000x1000
 ```
+This will generate image of size 1000px x 1000px
+
+## -Name (Not required)
+
+Specify name of output image
+
+Default value is `Newtons-Fractal`
+
+```bash
+--name name
+```
+Where `name` is string
+
+Exmaple:
+
+```bash
+./generate "z^3 - 1" --name my_name_for_fractal
+```
+This will save the result in `my_name_for_fractal.png`
 
 # How it works
 

@@ -33,6 +33,7 @@ void slice_str(const char * str, char * buffer, size_t start, size_t end)
     }
     buffer[j] = 0;
 }
+
 Args parseArgs(int count, char* values[]){
     if(count < 2){
         std::cout << "You must provide polynomial\n";
@@ -54,6 +55,15 @@ Args parseArgs(int count, char* values[]){
                     break;   
                 }
             }
+        }
+        else if(strcmp(values[i], "--name") == 0){
+            char* name = values[i+1];
+            char* ppm;
+            char* png;
+            asprintf(&ppm, "%s%s", name, ".ppm");
+            asprintf(&png, "%s%s", name, ".png");
+            args.ppm = ppm;
+            args.png = png;
         }
     }
     return args;
@@ -148,7 +158,7 @@ void generateFractal(func_t fx, func_t fprime, Args args){
     //Constants
     const int WIDTH = args.width, HEIGHT = args.height, MAX_ITER = 1000;
     const double xmin = -1, xmax = 1, ymin = -1, ymax = 1;
-    std::cout << WIDTH << ", " << HEIGHT << std::endl;
+
     //Variables for pixel/coefficient transform
     double linspaceX[WIDTH], linspaceY[HEIGHT], stepX = (xmax - xmin) / WIDTH, stepY = (ymax - ymin) / HEIGHT, cofx, cofy;
     
