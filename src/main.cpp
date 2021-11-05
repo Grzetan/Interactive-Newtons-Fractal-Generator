@@ -159,14 +159,16 @@ f loadLibrary(){
 void generateFractal(func_t fx, func_t fprime, Args args){
     //Constants
     const int WIDTH = args.width, HEIGHT = args.height, MAX_ITER = 1000;
-    const double xmin = -1 * args.zoom, xmax = 1 * args.zoom, ymin = -1 * args.zoom, ymax = 1 * args.zoom; 
+    const double canvasX = 3 * args.zoom, canvasY = (float(HEIGHT) / float(WIDTH)) * 3 * args.zoom;
+    const double xmin = -0.5*canvasX, xmax = 0.5*canvasX, ymin = -0.5*canvasY, ymax = 0.5*canvasY; 
+
 
     //Variables for pixel/coefficient transform
-    double linspaceX[WIDTH], linspaceY[HEIGHT], stepX = (xmax - xmin) / WIDTH, stepY = (ymax - ymin) / HEIGHT, cofx, cofy;
+    double linspaceX[WIDTH], linspaceY[HEIGHT], stepX = canvasX / WIDTH, stepY = canvasY / HEIGHT, cofx, cofy;
     
     //Roots calculation
     double TOL = 1.e-12, rootTOL = 1.e-7,dist;
-    int closestRoot, i, j, k;
+    int closestRoot, i, j, k, count = 0;
     Complex delta, _dist;
     vector<Complex> roots;
     bool foundRoot;
@@ -189,7 +191,8 @@ void generateFractal(func_t fx, func_t fprime, Args args){
     for(int y=0; y<HEIGHT; y++){
         cofy = ymin + stepY * y;
         for(int x=0; x<WIDTH; x++){
-            std::cout << "\rGenerating fractal... " << int(float(float(y*HEIGHT+x) / float(WIDTH*HEIGHT)) * 100)+1 << "%";
+            count++;
+            std::cout << "\rGenerating fractal... " << int((float(float(count) / float(WIDTH*HEIGHT))) * 100) << "%";
             foundRoot = false;
             cofx = xmin + stepX * x;
             Complex z(cofx, cofy);
