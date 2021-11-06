@@ -48,7 +48,7 @@ Just put it in quotes after `./generate` like this:
 ./generate "z^4 - 1"
 ```
 
-#### Formula for each component:
+#### Formula for regular component:
 ```bash
 az^n
 ```
@@ -79,11 +79,27 @@ This is **NOT** allowed:
 ```bash
 ./generate "z^9*2 + 2z^2/8 - z^1/2 - 9"
 ```
-#### - there aren't any trygonometric functions
-This is **NOT** allowed:
+
+You can also use tygonometric function like `sin`, `cos`, `sinh`, `cosh`;
+
+#### Examples:
 ```bash
-./generate "sin(z^9) + 2cos(z^8) - tan(z^4) - 9"
+./generate "sin(z)"
 ```
+
+```bash
+./generate "2cosh(z)"
+```
+
+```bash
+./generate "z^9 - 14z^4 - sinh(z) - 5"
+```
+
+```bash
+./generate "-4cos(z) + z^8"
+```
+
+For some reason if you pass more than one trygonometric function it get's messy and takes a lot more time to generate, but I'm not smart enough to fure that out :)
 
 ## -Size (Not required)
 

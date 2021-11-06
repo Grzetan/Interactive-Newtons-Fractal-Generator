@@ -5,7 +5,7 @@ xd
 .vscode/
 *.ppm
 *.pgm
-*.png
+# *.png
 *.py
 
 # Compiled Object files
