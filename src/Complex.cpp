@@ -63,6 +63,14 @@ Complex Complex::cosh(){
     return Complex(std::cosh(real) * std::cos(imag), std::sinh(real) * std::sin(imag));
 }
 
+Complex Complex::sin(){
+    return Complex(std::sin(real) * std::cosh(imag), std::cos(real) * std::sinh(imag));
+}
+
+Complex Complex::cos(){
+    return Complex(std::cos(real) * std::cosh(imag), std::sin(real) * std::sinh(imag));
+}
+
 void Complex::print(){
     std::cout << real << " + " << imag << "i" << std::endl;
 }

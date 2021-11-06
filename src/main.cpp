@@ -74,12 +74,50 @@ Args parseArgs(int count, char* values[]){
 void preprocessChunk(std::string chunk, std::string& fx, std::string& fprime){
     std::string multi, pow, sign;
 
-    if(chunk.find('z') != std::string::npos){
+    sign = chunk[0];
+
+
+    if(chunk.find("sinh") != std::string::npos){
+        multi = chunk.substr(1, chunk.find('s')-1);
+        if(multi == ""){
+            multi = "1";
+        }
+        fx = fx + sign + "z.sinh()*" + multi;
+        fprime = fprime + sign + "z.cosh()*" + multi;
+    }else if(chunk.find("cosh") != std::string::npos){
+        multi = chunk.substr(1, chunk.find('c')-1);
+        if(multi == ""){
+            multi = "1";
+        }
+        fx = fx + sign + "z.cosh()*" + multi;
+        fprime = fprime + sign + "z.sinh()*" + multi;
+    }else if(chunk.find("sin") != std::string::npos){
+        multi = chunk.substr(1, chunk.find('s')-1);
+        if(multi == ""){
+            multi = "1";
+        }
+        fx = fx + sign + "z.sin()*" + multi;
+        fprime = fprime + sign + "z.cos()*" + multi;
+    }else if(chunk.find("cos") != std::string::npos){
+        multi = chunk.substr(1, chunk.find('c')-1);
+        if(multi == ""){
+            multi = "1";
+        }
+        fx = fx + sign + "z.cos()*" + multi;
+        //Change sign
+        if(sign == "+"){
+            sign = "-";
+        }else if(sign == "-"){
+            sign = "+";
+        }else if(sign == ""){
+            sign = "-";
+        }
+        fprime = fprime + sign + "z.sin()*" + multi;
+    }else if(chunk.find('z') != std::string::npos){
         multi = chunk.substr(1, chunk.find('z')-1);
         if(multi == ""){
             multi = "1";
         }
-        sign = chunk[0];
         if(chunk.find('^') != std::string::npos){
             pow = chunk.substr(chunk.find('^')+1, chunk.length() - 1);
             fx = fx + sign + "(z^" + pow + ")*" + multi;

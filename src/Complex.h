@@ -32,5 +32,9 @@ public:
 
     Complex cosh();
 
+    Complex sin();
+
+    Complex cos();
+
     void print();
 };

@@ -21,6 +21,9 @@ sudo apt install imagemagick
 sudo learn polynomials
 ```
 
+For better expirience i recommend you to watch awesome [3Blue1Brown's video](https://www.youtube.com/watch?v=-RdOwhmqP5s&t=709s) about Newton's fractal
+and read [Wikipedia article](https://en.wikipedia.org/wiki/Newton_fractal).
+
 # How to use 
 
 Download `generate` file from root directory and call it
@@ -33,7 +36,7 @@ If for some reason it doesn't work you can complie source code localy:
 ```bash
 g++ -I/src src/main.cpp src/Complex.cpp -o generate -ldl
 ```
-and call program following steps above.
+and call program as shown above.
 
 # Parameters
 
