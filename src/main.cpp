@@ -158,7 +158,7 @@ f loadLibrary(){
 
 void generateFractal(func_t fx, func_t fprime, Args args){
     //Constants
-    const int WIDTH = args.width, HEIGHT = args.height, MAX_ITER = 1000;
+    const int WIDTH = args.width, HEIGHT = args.height, MAX_ITER = 40;
     const double canvasX = 3 * args.zoom, canvasY = (float(HEIGHT) / float(WIDTH)) * 3 * args.zoom;
     const double xmin = -0.5*canvasX, xmax = 0.5*canvasX, ymin = -0.5*canvasY, ymax = 0.5*canvasY; 
 
@@ -167,7 +167,7 @@ void generateFractal(func_t fx, func_t fprime, Args args){
     double linspaceX[WIDTH], linspaceY[HEIGHT], stepX = canvasX / WIDTH, stepY = canvasY / HEIGHT, cofx, cofy;
     
     //Roots calculation
-    double TOL = 1.e-12, rootTOL = 1.e-7, dist;
+    double TOL = 1.e-12, rootTOL = 1.e-8, dist, saturation;
     int closestRoot, i, j, k, count = 0;
     Complex delta, _dist;
     vector<Complex> roots;
@@ -217,9 +217,10 @@ void generateFractal(func_t fx, func_t fprime, Args args){
                         closestRoot = roots.size() - 1;
                     }
                     //Assing corresponding color to processed pixel
-                    pixel[0] = rootsColors[closestRoot][0];
-                    pixel[1] = rootsColors[closestRoot][1]; 
-                    pixel[2] = rootsColors[closestRoot][2]; 
+                    saturation = float(MAX_ITER - i) / float(MAX_ITER);
+                    pixel[0] = saturation * rootsColors[closestRoot][0];
+                    pixel[1] = saturation * rootsColors[closestRoot][1]; 
+                    pixel[2] = saturation * rootsColors[closestRoot][2]; 
                     foundRoot = true;
 
                     break;
