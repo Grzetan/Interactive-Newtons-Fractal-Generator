@@ -1,4 +1,5 @@
 #include <iostream>
+#include <math.h>
 
 class Complex{
 public:
@@ -26,6 +27,10 @@ public:
     Complex operator/(double b);
 
     Complex operator/(Complex b);
+
+    Complex sinh();
+
+    Complex cosh();
 
     void print();
 };

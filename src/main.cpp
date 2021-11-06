@@ -100,7 +100,7 @@ void processEquation(std::string equation, std::string& fx, std::string& fprime)
             equation.erase(equation.begin() + i);
         }
     }
-    
+
     int lastChunk = 0;
     if(equation[0] != '-'){
         equation = "+" + equation;
@@ -167,7 +167,7 @@ void generateFractal(func_t fx, func_t fprime, Args args){
     double linspaceX[WIDTH], linspaceY[HEIGHT], stepX = canvasX / WIDTH, stepY = canvasY / HEIGHT, cofx, cofy;
     
     //Roots calculation
-    double TOL = 1.e-12, rootTOL = 1.e-7,dist;
+    double TOL = 1.e-12, rootTOL = 1.e-7, dist;
     int closestRoot, i, j, k, count = 0;
     Complex delta, _dist;
     vector<Complex> roots;
@@ -197,7 +197,7 @@ void generateFractal(func_t fx, func_t fprime, Args args){
             cofx = xmin + stepX * x;
             Complex z(cofx, cofy);
             for(i=0; i<MAX_ITER; i++){
-                delta = fx(z) / fprime(z);
+                delta = (fx(z) / fprime(z));
                 //If step is really small
                 if(std::abs(delta.real) < TOL || std::abs(delta.imag) < TOL){
                     //Find closest root

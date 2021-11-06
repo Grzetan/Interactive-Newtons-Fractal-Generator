@@ -55,6 +55,14 @@ Complex Complex::operator/(Complex b){
     (imag * b.real - real * b.imag) / denominator);
 }
 
+Complex Complex::sinh(){
+    return Complex(std::sinh(real) * std::cos(imag), std::cosh(real) * std::sin(imag));
+}
+
+Complex Complex::cosh(){
+    return Complex(std::cosh(real) * std::cos(imag), std::sinh(real) * std::sin(imag));
+}
+
 void Complex::print(){
     std::cout << real << " + " << imag << "i" << std::endl;
 }

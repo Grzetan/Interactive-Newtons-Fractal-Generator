@@ -112,12 +112,39 @@ Default value is `Newtons-Fractal`
 ```
 Where `name` is string
 
-Exmaple:
+Example:
 
 ```bash
 ./generate "z^3 - 1" --name my_name_for_fractal
 ```
 This will save the result in `my_name_for_fractal.png`
+
+## -Zoom (Not required)
+
+Specify zoom of image
+
+Default value is `1`
+
+```bash
+--zoom zoom
+```
+where `zoom` is `double`
+
+If `zoom < 1` image will be zoomed out.
+
+If `zoom > 1` image will be zoomed in.
+
+Example:
+```bash
+./generate "z^3 - 1" --zoom 0.1
+```
+This will zoom out 10 times.
+
+Example:
+```bash
+./generate "z^3 - 1" --zoom 10
+```
+This will zoom in 10 times.
 
 # How it works
 
