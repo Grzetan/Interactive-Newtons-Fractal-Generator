@@ -239,3 +239,11 @@ it is saved to `.ppm` file. For user's convinience it is later converted to `.pn
 
 `./generate "-9sin(z)" --name gallery/7 --zoom 0.1 --size 1920x1080`
 ![img](./gallery/7.png)
+
+`./generate "cosh(z) - z^20 + cos(z)" --name gallery/8 --zoom 1`
+![img](./gallery/8.png)
+
+`./generate "sinh(z) - z^20 + cos(z) - sin(z)" --name gallery/9 --zoom 1 --size 1920x1080`
+![img](./gallery/9.png)
+
+
