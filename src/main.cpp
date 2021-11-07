@@ -300,5 +300,9 @@ int main(int argc, char *argv[]){
     //Generate Fractal
     generateFractal(F.x, F.prime, args);
 
+    //Delete temporary files
+    system("rm src/tmp.so");
+    system("rm src/tmp.cpp");
+
     return 0;
 }

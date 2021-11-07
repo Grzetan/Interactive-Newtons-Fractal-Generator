@@ -2,7 +2,24 @@
 
 Visaulization of Newton's Fractal written in C/C++. This program generates Newton's fractal based on polynomial provided in parameters and saves it to `.png` image.
 
-# Requirements
+---
+
+# Table of contents
+
+1. [Requirements](#requirements)
+2. [How to use](#how-to-use)
+3. [Paramaters](#parameters)
+    - [Polynomial](#polynomial)
+    - [`--size`](#size)
+    - [`--name`](#name)
+    - [`--zoom`](#zoom)
+5. [How it works](#how-it-works)
+6. [Gallery](#gallery)
+
+
+---
+
+# Requirements <a name="requirements"></a>
 
 - Linux (tested on Ubuntu 20.04 LTS)
 
@@ -24,7 +41,10 @@ sudo learn polynomials
 For better expirience i recommend you to watch awesome [3Blue1Brown's video](https://www.youtube.com/watch?v=-RdOwhmqP5s&t=709s) about Newton's fractal
 and read [Wikipedia article](https://en.wikipedia.org/wiki/Newton_fractal).
 
-# How to use 
+
+---
+
+# How to use <a name="how-to-use"></a>
 
 Download `generate` file from root directory and call it
 ```bash
@@ -38,9 +58,12 @@ g++ -I/src src/main.cpp src/Complex.cpp -o generate -ldl
 ```
 and call program as shown above.
 
-# Parameters
 
-## -Polymonial
+---
+
+# Parameters <a name="parameters"></a>
+
+## Polymonial <a name="polynomial"></a>
 
 To generate fractal you have to provide this argument.
 Just put it in quotes after `./generate` like this:
@@ -99,9 +122,11 @@ You can also use tygonometric function like `sin`, `cos`, `sinh`, `cosh`;
 ./generate "-4cos(z) + z^8"
 ```
 
-For some reason if you pass more than one trygonometric function it get's messy and takes a lot more time to generate, but I'm not smart enough to fure that out :)
+For some reason if you pass more than one trygonometric function it get's messy and takes a lot more time to generate, but I'm not smart enough to figure that out :)
 
-## -Size (Not required)
+---
+
+## `--size` (Not required) <a name="size"></a>
 
 Specify desired size of output image.
 
@@ -120,7 +145,9 @@ Example:
 ```
 This will generate image of size 1000px x 1000px
 
-## -Name (Not required)
+---
+
+## `--name` (Not required) <a name="name"></a>
 
 Specify name of output image
 
@@ -138,7 +165,9 @@ Example:
 ```
 This will save the result in `my_name_for_fractal.png`
 
-## -Zoom (Not required)
+---
+
+## `--zoom` (Not required) <a name="zoom"></a>
 
 Specify zoom of image
 
@@ -165,7 +194,9 @@ Example:
 ```
 This will zoom in 10 times.
 
-# How it works
+---
+
+# How it works <a name="how-it-works"></a>
 
 Program contains 4 steps:
 
@@ -184,3 +215,27 @@ awesome [3Blue1Brown's video](https://www.youtube.com/watch?v=-RdOwhmqP5s&t=709s
 so you can easly say that your fractal is unique😊. When fractal is generated
 it is saved to `.ppm` file. For user's convinience it is later converted to `.png` file and `.ppm` file is deleted.
 
+---
+
+# Gallery <a name="gallery"></a>
+
+`./generate "z^4 - 17" --name gallery/1 --zoom 0.7 --size 1920x1080`
+![img](./gallery/1.png)
+
+`./generate "-3cos(z) + z^13" --name gallery/2 --zoom 0.7 --size 1920x1080`
+![img](./gallery/2.png)
+
+`./generate "-cosh(z) + z^4" --name gallery/3 --zoom 2 --size 1920x1080`
+![img](./gallery/3.png)
+
+`./generate "-7z^9 + 14z^7 - sinh(z) + 17" --name gallery/4 --zoom 0.8 --size 1920x1080`
+![img](./gallery/4.png)
+
+`./generate "z^6 + z^5 + z^4 + z^3 + z^2 + z + 1" --name gallery/5 --zoom 1 --size 1920x1080`
+![img](./gallery/5.png)
+
+`./generate "sin(z) + cos(z) - sinh(z)" --name gallery/6 --zoom 1 --size 1920x1080`
+![img](./gallery/6.png)
+
+`./generate "-9sin(z)" --name gallery/7 --zoom 0.1 --size 1920x1080`
+![img](./gallery/7.png)
