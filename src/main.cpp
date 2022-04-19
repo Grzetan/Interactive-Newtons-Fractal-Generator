@@ -24,6 +24,7 @@ struct Args{
     const char* ppm = "Newtons-Fractal.ppm";
     const char* png = "Newtons-Fractal.png";
     const char* equation;
+    bool saturation = true;
 };
 
 void slice_str(const char * str, char * buffer, size_t start, size_t end)
@@ -66,6 +67,8 @@ Args parseArgs(int count, char* values[]){
             args.png = png;
         }else if(strcmp(values[i], "--zoom") == 0){
             args.zoom = 1 / std::stod(values[i+1]);
+        }else if(strcmp(values[i], "--no-saturation") == 0){
+            args.saturation = false;
         }
     }
     return args;
@@ -255,7 +258,11 @@ void generateFractal(func_t fx, func_t fprime, Args args){
                         closestRoot = roots.size() - 1;
                     }
                     //Assing corresponding color to processed pixel
-                    saturation = float(MAX_ITER - i) / float(MAX_ITER);
+                    if(args.saturation){
+                        saturation = float(MAX_ITER - i) / float(MAX_ITER);
+                    }else{
+                        saturation = 1;
+                    }
                     pixel[0] = saturation * rootsColors[closestRoot][0];
                     pixel[1] = saturation * rootsColors[closestRoot][1]; 
                     pixel[2] = saturation * rootsColors[closestRoot][2]; 

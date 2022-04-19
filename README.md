@@ -13,6 +13,7 @@ Visaulization of Newton's Fractal written in C/C++. This program generates Newto
     - [`--size`](#size)
     - [`--name`](#name)
     - [`--zoom`](#zoom)
+    - [`--no-saturation`](#saturation)
 5. [How it works](#how-it-works)
 6. [Gallery](#gallery)
 
@@ -195,6 +196,17 @@ Example:
 This will zoom in 10 times.
 
 ---
+
+## `--no-saturation` (Not required) <a name="saturation"></a>
+
+Turn off saturation
+
+All colors won't have shades.
+
+Example:
+```bash
+--no-saturation
+```
 
 # How it works <a name="how-it-works"></a>
 
